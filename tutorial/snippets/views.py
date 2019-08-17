@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 
 @api_view(['GET','POST'])
-def snippet_list(request):
+def snippet_list(request,format=None):
     if request.method == 'GET':
         snippetObjectsList = Snippet.objects.all()
         snippetListSerializer = SnippetSerializer(snippetObjectsList , many=True )
@@ -24,7 +24,7 @@ def snippet_list(request):
             return Response(deserializer.data,status.HTTP_201_CREATED)
         return Response(deserializer.data,status.HTTP_400_BAD_REQUEST)
 @api_view(['GET','PUT','DELETE'])
-def snippets(request,pk):
+def snippets(request,pk,format=None):
    #this api is only for reading(so far 11-Aug-2019) , updating an existing and deleting an existing 
     try:
         snippet = Snippet.objects.get(pk=pk)
@@ -34,8 +34,8 @@ def snippets(request,pk):
         snippetSerializer = SnippetSerializer(snippet)
         return Response(snippetSerializer.data);
     elif request.method == 'PUT':
-        snippetDeserializer = SnippetSerializer(request.data)
-        if snippetDeserialiser.is_valid():
+        snippetDeserializer = SnippetSerializer(data=request.data)
+        if snippetDeserializer.is_valid():
             snippetDeserializer.save()
             return Response(status.HTTP_201_CREATED)
         return Response(deserializer.data,status.HTTP_400_BAD_REQUEST)
@@ -73,6 +73,8 @@ def snippet_list(request):
 
 '''
 
+'''
+
 #This view is on displaying a single object of snippet
 @csrf_exempt
 def snippet_detail(request, pk):
@@ -99,4 +101,6 @@ def snippet_detail(request, pk):
     elif request.method == 'DELETE':
         snippet.delete()
         return HttpResponse(status=204)    
-        
+       
+'''
+    
